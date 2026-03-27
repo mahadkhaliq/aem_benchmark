@@ -1,0 +1,8 @@
+data/
+forward_model/models/
+__pycache__/
+*.zip
+*.egg-info/
+.claude/
+help/
+GitHub/
