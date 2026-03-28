@@ -1,4 +1,4 @@
-# Forward Model — All-Dielectric Metasurface
+# Forward Model All-Dielectric Metasurface
 
 Replication of the MLP forward model from:
 > *Benchmarking Data-driven Surrogate Simulators for Artificial Electromagnetic Materials*, NeurIPS 2021
