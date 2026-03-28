@@ -51,13 +51,16 @@ def main():
     net = model.model.to(device)
 
     optimizer = Adam(net.parameters(), lr=config.LR, weight_decay=config.WEIGHT_DECAY)
-    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=config.LR_DECAY_RATE, patience=10, threshold=1e-4)
+    # Matches AEML loop: step on val_mse every epoch, patience=10 epochs
+    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=config.LR_DECAY_RATE,
+                                  patience=10, threshold=1e-4)
     writer = SummaryWriter(CKPT_DIR)
 
     best_val_loss = float('inf')
     start = time.time()
 
     for epoch in range(config.EPOCHS):
+        # Training
         net.train()
         train_loss, n_train = 0.0, 0
         for x, y in train_loader:
@@ -71,33 +74,34 @@ def main():
             n_train += y.numel()
 
         train_mse = train_loss / n_train
-        current_lr = optimizer.param_groups[0]['lr']
 
+        # Validate every epoch — matches AEML loop exactly
+        val_mse = evaluate(net, val_loader, device)
+        scheduler.step(val_mse)
+
+        current_lr = optimizer.param_groups[0]['lr']
         writer.add_scalar('Loss/train', train_mse, epoch)
+        writer.add_scalar('Loss/val', val_mse, epoch)
         writer.add_scalar('LR', current_lr, epoch)
 
         if epoch % config.EVAL_STEP == 0:
-            val_mse = evaluate(net, val_loader, device)
             elapsed = (time.time() - start) / 60
-            scheduler.step(val_mse)
-
-            writer.add_scalar('Loss/val', val_mse, epoch)
-
             print(f"Epoch {epoch:4d} | train {train_mse:.5f} | val {val_mse:.5f} | lr {current_lr:.2e} | {elapsed:.1f} min")
 
-            if val_mse < best_val_loss:
-                best_val_loss = val_mse
-                torch.save(net, os.path.join(CKPT_DIR, 'best_model_forward.pt'))
+        if val_mse < best_val_loss:
+            best_val_loss = val_mse
+            torch.save(net, os.path.join(CKPT_DIR, 'best_model_forward.pt'))
+            if epoch % config.EVAL_STEP == 0:
                 print(f"           -> saved (best val {best_val_loss:.5f})")
 
-            if best_val_loss < config.STOP_THRESHOLD:
-                print(f"Stopping early at epoch {epoch}")
-                break
+        if best_val_loss < config.STOP_THRESHOLD:
+            print(f"Stopping early at epoch {epoch}")
+            break
 
     # Final test evaluation
+    net.eval()
     test_x_t = torch.tensor(test_x).to(device)
     test_y_t = torch.tensor(test_y).to(device)
-    net.eval()
     with torch.no_grad():
         pred = net(test_x_t)
         test_mse = nn.functional.mse_loss(pred, test_y_t).item()
