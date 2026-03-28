@@ -3,6 +3,9 @@
 Replication of the MLP forward model from:
 > *Benchmarking Data-driven Surrogate Simulators for Artificial Electromagnetic Materials*, NeurIPS 2021
 
+> *https://github.com/yangdeng-EML/ML_MM_Benchmark*
+>
+> 
 The forward model takes 14 geometric parameters of an all-dielectric metasurface as input and predicts a 2001-point electromagnetic absorptivity spectrum.
 
 ## Setup
