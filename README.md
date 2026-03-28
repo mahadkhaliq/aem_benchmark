@@ -57,19 +57,19 @@ Then open `http://localhost:6006`. Logs include train loss, validation loss, and
 
 ## Inference
 
-**Single sample** — predict the spectrum for one test sample and plot it:
+**Single sample**  predict the spectrum for one test sample and plot it:
 ```bash
 cd forward_model
 python predict.py --idx 0      # sample index 0 to 5867
 ```
 
-**Full test set** — evaluate all 5868 test samples and save summary plots:
+**Full test set**  evaluate all 5868 test samples and save summary plots:
 ```bash
 cd forward_model
 python test_model.py
 ```
 
-**Export training logs** — save TensorBoard scalars to CSV:
+**Export training logs**  save TensorBoard scalars to CSV:
 ```bash
 cd forward_model
 python export_logs.py
