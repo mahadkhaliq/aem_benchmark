@@ -72,7 +72,6 @@ def main():
 
         train_mse = train_loss / n_train
         current_lr = optimizer.param_groups[0]['lr']
-        scheduler.step(train_mse)
 
         writer.add_scalar('Loss/train', train_mse, epoch)
         writer.add_scalar('LR', current_lr, epoch)
@@ -80,6 +79,7 @@ def main():
         if epoch % config.EVAL_STEP == 0:
             val_mse = evaluate(net, val_loader, device)
             elapsed = (time.time() - start) / 60
+            scheduler.step(val_mse)
 
             writer.add_scalar('Loss/val', val_mse, epoch)
 
