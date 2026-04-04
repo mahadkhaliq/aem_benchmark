@@ -1,0 +1,294 @@
+=== Cloning repository ===
+Cloning into 'code'...
+=== Linking data PVC to expected path ===
+=== Starting Transformer training (Variant 1, batch_size=1024) ===
+Transformer is GOOD
+
+=======================================================
+Training Transformer Variant 1: adm_transformer_v1
+=======================================================
+  feature_channel_num: 512
+  nhead_encoder: 8
+  dim_fc_encoder: 32
+  num_encoder_layer: 6
+  head_linear: [14, 500, 500, 500, 500, 500, 500, 500, 500, 6144]
+  tail_linear: []
+  sequence_length: 12
+  lr: 0.0002
+  weight_decay: 0.0005
+  lr_decay_rate: 0.2
+  epochs: 300
+  eval_step: 10
+  stop_threshold: -1
+  batch_size: 1024
+=======================================================
+
+Using device: cuda
+Loading ADM
+In normalize_np, row  0  your max is: 1.0
+In normalize_np, row  0  your min is: -1.0
+In normalize_np, row  1  your max is: 1.0
+In normalize_np, row  1  your min is: -1.0
+In normalize_np, row  2  your max is: 0.99999994
+In normalize_np, row  2  your min is: -1.0000001
+In normalize_np, row  3  your max is: 0.99999994
+In normalize_np, row  3  your min is: -1.0000001
+In normalize_np, row  4  your max is: 0.99999994
+In normalize_np, row  4  your min is: -1.0000001
+In normalize_np, row  5  your max is: 0.99999994
+In normalize_np, row  5  your min is: -1.0000001
+In normalize_np, row  6  your max is: 0.99999994
+In normalize_np, row  6  your min is: -1.0000001
+In normalize_np, row  7  your max is: 0.99999994
+In normalize_np, row  7  your min is: -1.0000001
+In normalize_np, row  8  your max is: 0.99999994
+In normalize_np, row  8  your min is: -1.0000001
+In normalize_np, row  9  your max is: 0.99999994
+In normalize_np, row  9  your min is: -1.0000001
+In normalize_np, row  10  your max is: 1.0
+In normalize_np, row  10  your min is: -1.0
+In normalize_np, row  11  your max is: 1.0
+In normalize_np, row  11  your min is: -1.0
+In normalize_np, row  12  your max is: 1.0
+In normalize_np, row  12  your min is: -1.0
+In normalize_np, row  13  your max is: 1.0
+In normalize_np, row  13  your min is: -1.0
+In normalize_np, row  0  your max is: 1.0
+In normalize_np, row  0  your min is: -1.0
+In normalize_np, row  1  your max is: 1.0
+In normalize_np, row  1  your min is: -1.0
+In normalize_np, row  2  your max is: 0.99999994
+In normalize_np, row  2  your min is: -1.0000001
+In normalize_np, row  3  your max is: 0.99999994
+In normalize_np, row  3  your min is: -1.0000001
+In normalize_np, row  4  your max is: 0.99999994
+In normalize_np, row  4  your min is: -1.0000001
+In normalize_np, row  5  your max is: 0.99999994
+In normalize_np, row  5  your min is: -1.0000001
+In normalize_np, row  6  your max is: 0.99999994
+In normalize_np, row  6  your min is: -1.0000001
+In normalize_np, row  7  your max is: 0.99999994
+In normalize_np, row  7  your min is: -1.0000001
+In normalize_np, row  8  your max is: 0.99999994
+In normalize_np, row  8  your min is: -1.0000001
+In normalize_np, row  9  your max is: 0.99999994
+In normalize_np, row  9  your min is: -1.0000001
+In normalize_np, row  10  your max is: 1.0
+In normalize_np, row  10  your min is: -1.0
+In normalize_np, row  11  your max is: 1.0
+In normalize_np, row  11  your min is: -1.0
+In normalize_np, row  12  your max is: 1.0
+In normalize_np, row  12  your min is: -1.0
+In normalize_np, row  13  your max is: 1.0
+In normalize_np, row  13  your min is: -1.0
+shape of data_x (52812, 14)
+shape of data_y (52812, 2001)
+shape of test_x (5868, 14)
+shape of test_y (5868, 2001)
+total number of training sample is 42249, the dimension of the feature is 14
+total number of test sample is 10563
+Finish loading Particle dataset
+last dim of head linear 6144
+flags. feature channel num 512
+sequence  length  12
+Transformer(
+  (head_linears): ModuleList(
+    (0): Linear(in_features=14, out_features=500, bias=True)
+    (1): Linear(in_features=500, out_features=500, bias=True)
+    (2): Linear(in_features=500, out_features=500, bias=True)
+    (3): Linear(in_features=500, out_features=500, bias=True)
+    (4): Linear(in_features=500, out_features=500, bias=True)
+    (5): Linear(in_features=500, out_features=500, bias=True)
+    (6): Linear(in_features=500, out_features=500, bias=True)
+    (7): Linear(in_features=500, out_features=500, bias=True)
+    (8): Linear(in_features=500, out_features=6144, bias=True)
+  )
+  (head_bn_linears): ModuleList(
+    (0): BatchNorm1d(500, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (1): BatchNorm1d(500, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (2): BatchNorm1d(500, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (3): BatchNorm1d(500, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (4): BatchNorm1d(500, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (5): BatchNorm1d(500, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (6): BatchNorm1d(500, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (7): BatchNorm1d(500, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (8): BatchNorm1d(6144, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  )
+  (encoder_layer): TransformerEncoderLayer(
+    (self_attn): MultiheadAttention(
+      (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+    )
+    (linear1): Linear(in_features=512, out_features=32, bias=True)
+    (dropout): Dropout(p=0.1, inplace=False)
+    (linear2): Linear(in_features=32, out_features=512, bias=True)
+    (norm1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+    (norm2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+    (dropout1): Dropout(p=0.1, inplace=False)
+    (dropout2): Dropout(p=0.1, inplace=False)
+  )
+  (transformer_encoder): TransformerEncoder(
+    (layers): ModuleList(
+      (0): TransformerEncoderLayer(
+        (self_attn): MultiheadAttention(
+          (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+        )
+        (linear1): Linear(in_features=512, out_features=32, bias=True)
+        (dropout): Dropout(p=0.1, inplace=False)
+        (linear2): Linear(in_features=32, out_features=512, bias=True)
+        (norm1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (norm2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (dropout1): Dropout(p=0.1, inplace=False)
+        (dropout2): Dropout(p=0.1, inplace=False)
+      )
+      (1): TransformerEncoderLayer(
+        (self_attn): MultiheadAttention(
+          (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+        )
+        (linear1): Linear(in_features=512, out_features=32, bias=True)
+        (dropout): Dropout(p=0.1, inplace=False)
+        (linear2): Linear(in_features=32, out_features=512, bias=True)
+        (norm1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (norm2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (dropout1): Dropout(p=0.1, inplace=False)
+        (dropout2): Dropout(p=0.1, inplace=False)
+      )
+      (2): TransformerEncoderLayer(
+        (self_attn): MultiheadAttention(
+          (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+        )
+        (linear1): Linear(in_features=512, out_features=32, bias=True)
+        (dropout): Dropout(p=0.1, inplace=False)
+        (linear2): Linear(in_features=32, out_features=512, bias=True)
+        (norm1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (norm2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (dropout1): Dropout(p=0.1, inplace=False)
+        (dropout2): Dropout(p=0.1, inplace=False)
+      )
+      (3): TransformerEncoderLayer(
+        (self_attn): MultiheadAttention(
+          (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+        )
+        (linear1): Linear(in_features=512, out_features=32, bias=True)
+        (dropout): Dropout(p=0.1, inplace=False)
+        (linear2): Linear(in_features=32, out_features=512, bias=True)
+        (norm1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (norm2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (dropout1): Dropout(p=0.1, inplace=False)
+        (dropout2): Dropout(p=0.1, inplace=False)
+      )
+      (4): TransformerEncoderLayer(
+        (self_attn): MultiheadAttention(
+          (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+        )
+        (linear1): Linear(in_features=512, out_features=32, bias=True)
+        (dropout): Dropout(p=0.1, inplace=False)
+        (linear2): Linear(in_features=32, out_features=512, bias=True)
+        (norm1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (norm2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (dropout1): Dropout(p=0.1, inplace=False)
+        (dropout2): Dropout(p=0.1, inplace=False)
+      )
+      (5): TransformerEncoderLayer(
+        (self_attn): MultiheadAttention(
+          (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+        )
+        (linear1): Linear(in_features=512, out_features=32, bias=True)
+        (dropout): Dropout(p=0.1, inplace=False)
+        (linear2): Linear(in_features=32, out_features=512, bias=True)
+        (norm1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (norm2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (dropout1): Dropout(p=0.1, inplace=False)
+        (dropout2): Dropout(p=0.1, inplace=False)
+      )
+    )
+  )
+  (tail_linears): ModuleList(
+    (0): Linear(in_features=6144, out_features=2001, bias=True)
+  )
+  (tail_bn_linears): ModuleList(
+    (0): BatchNorm1d(2001, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  )
+)
+Starting training now
+Doing Evaluation on the model now
+This is Epoch 0, training loss 0.07684, validation loss 0.01569
+Saving the model down...
+Doing Evaluation on the model now
+This is Epoch 10, training loss 0.00445, validation loss 0.00478
+Saving the model down...
+Doing Evaluation on the model now
+This is Epoch 20, training loss 0.00319, validation loss 0.00375
+Saving the model down...
+Doing Evaluation on the model now
+This is Epoch 30, training loss 0.00272, validation loss 0.00324
+Saving the model down...
+Doing Evaluation on the model now
+This is Epoch 40, training loss 0.00251, validation loss 0.00301
+Saving the model down...
+Doing Evaluation on the model now
+This is Epoch 50, training loss 0.00238, validation loss 0.00294
+Saving the model down...
+Doing Evaluation on the model now
+This is Epoch 60, training loss 0.00229, validation loss 0.00266
+Saving the model down...
+Doing Evaluation on the model now
+This is Epoch 70, training loss 0.00226, validation loss 0.00254
+Saving the model down...
+Doing Evaluation on the model now
+This is Epoch 80, training loss 0.00224, validation loss 0.00262
+Epoch    85: reducing learning rate of group 0 to 4.0000e-05.
+Doing Evaluation on the model now
+This is Epoch 90, training loss 0.00139, validation loss 0.00168
+Saving the model down...
+Doing Evaluation on the model now
+This is Epoch 100, training loss 0.00139, validation loss 0.00186
+Epoch   109: reducing learning rate of group 0 to 8.0000e-06.
+Doing Evaluation on the model now
+This is Epoch 110, training loss 0.00115, validation loss 0.00150
+Saving the model down...
+Doing Evaluation on the model now
+This is Epoch 120, training loss 0.00097, validation loss 0.00150
+Saving the model down...
+Doing Evaluation on the model now
+This is Epoch 130, training loss 0.00089, validation loss 0.00153
+Doing Evaluation on the model now
+This is Epoch 140, training loss 0.00082, validation loss 0.00157
+Doing Evaluation on the model now
+This is Epoch 150, training loss 0.00085, validation loss 0.00165
+Epoch   155: reducing learning rate of group 0 to 1.6000e-06.
+Doing Evaluation on the model now
+This is Epoch 160, training loss 0.00078, validation loss 0.00155
+Doing Evaluation on the model now
+This is Epoch 170, training loss 0.00074, validation loss 0.00156
+Doing Evaluation on the model now
+This is Epoch 180, training loss 0.00072, validation loss 0.00157
+Doing Evaluation on the model now
+This is Epoch 190, training loss 0.00070, validation loss 0.00158
+Doing Evaluation on the model now
+This is Epoch 200, training loss 0.00068, validation loss 0.00159
+Doing Evaluation on the model now
+This is Epoch 210, training loss 0.00067, validation loss 0.00160
+Doing Evaluation on the model now
+This is Epoch 220, training loss 0.00066, validation loss 0.00161
+Doing Evaluation on the model now
+This is Epoch 230, training loss 0.00064, validation loss 0.00162
+Doing Evaluation on the model now
+This is Epoch 240, training loss 0.00063, validation loss 0.00164
+Doing Evaluation on the model now
+This is Epoch 250, training loss 0.00062, validation loss 0.00165
+Doing Evaluation on the model now
+This is Epoch 260, training loss 0.00062, validation loss 0.00166
+Doing Evaluation on the model now
+This is Epoch 270, training loss 0.00061, validation loss 0.00167
+Doing Evaluation on the model now
+This is Epoch 280, training loss 0.00060, validation loss 0.00168
+Doing Evaluation on the model now
+This is Epoch 290, training loss 0.00059, validation loss 0.00170
+
+Test MSE:     0.001501
+Best val MSE: 0.001502
+Results saved to models/Transformer/adm_transformer_v1/results.json
+Checkpoint saved to PVC: /develop/results/models/adm_transformer_v1/best_model_forward.pt
+results.json saved to PVC: /develop/results/models/adm_transformer_v1
+=== Saving results to results PVC ===
+=== Done ===
