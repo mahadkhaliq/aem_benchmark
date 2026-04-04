@@ -175,3 +175,16 @@ with open(os.path.join(CKPT_DIR, 'results.json'), 'w') as f:
 print(f"\nTest MSE:     {test_mse:.6f}")
 print(f"Best val MSE: {ntwk.best_validation_loss:.6f}")
 print(f"Results saved to {CKPT_DIR}/results.json")
+
+# ── Save checkpoint directly to results PVC (bypasses shell cp issues) ─────────
+import shutil
+PVC_RESULTS = '/develop/results/models/adm_transformer_v1'
+if os.path.exists('/develop/results/'):
+    os.makedirs(PVC_RESULTS, exist_ok=True)
+    src = os.path.join(CKPT_DIR, 'best_model_forward.pt')
+    dst = os.path.join(PVC_RESULTS, 'best_model_forward.pt')
+    shutil.copy2(src, dst)
+    print(f"Checkpoint saved to PVC: {dst}")
+    with open(os.path.join(PVC_RESULTS, 'results.json'), 'w') as f:
+        json.dump(results, f, indent=2)
+    print(f"results.json saved to PVC: {PVC_RESULTS}")
