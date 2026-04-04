@@ -48,8 +48,8 @@ def main():
         stop_threshold=config.STOP_THRESHOLD,
     )
 
-    # Final test evaluation
-    net = ntwk.model
+    # Final test evaluation — load best saved checkpoint, not last epoch
+    net = torch.load(os.path.join(CKPT_DIR, 'best_model_forward.pt'), map_location=device)
     net.eval()
     test_x_t = torch.tensor(test_x).to(device)
     test_y_t = torch.tensor(test_y).to(device)

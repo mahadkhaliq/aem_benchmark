@@ -7,14 +7,17 @@ import matplotlib.pyplot as plt
 
 import config
 from AEML.data.loader import normalize_np
-
+#checkpoint
 CKPT = os.path.join(os.path.dirname(__file__), 'models', 'MLP', 'adm_mlp', 'best_model_forward.pt')
+
 
 def load_model():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     net = torch.load(CKPT, map_location=device)
     net.eval()
     return net, device
+
+
 
 def load_data():
     os.chdir(config.DATA_DIR)
@@ -49,13 +52,13 @@ def main():
 
     plt.figure(figsize=(12, 4))
     plt.plot(y_true, label='Ground truth', alpha=0.8)
-    plt.plot(y_pred, label='Predicted', alpha=0.8, linestyle='--')
-    plt.title(f'Sample {idx} | MSE: {mse:.5f}')
+    plt.plot(y_pred, label='Predicted', alpha=0.8)
+    plt.title(f'Sample {idx} MSE: {mse:.5f}')
     plt.xlabel('Frequency index')
     plt.ylabel('Absorptivity')
     plt.legend()
     plt.tight_layout()
-    plt.savefig(os.path.join(os.path.dirname(__file__), 'results', f'predict_{idx}.png'), dpi=150)
+    plt.savefig(os.path.join(os.path.dirname(__file__), 'results', f'predict_{idx}.png'), dpi=300)
     plt.show()
     print(f"Plot saved to results/predict_{idx}.png")
 

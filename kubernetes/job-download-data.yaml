@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: adm-download-data
+  namespace: gp-engine-malof
+spec:
+  completions: 1
+  parallelism: 1
+  backoffLimit: 1
+  template:
+    spec:
+      automountServiceAccountToken: false
+      restartPolicy: Never
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: topology.kubernetes.io/region
+                    operator: In
+                    values:
+                      - us-central
+      containers:
+        - name: adm-download-data
+          image: mahadkhaliq/adm-train:v1
+          workingDir: /develop/data
+          command: ["/bin/bash", "-c"]
+          args: ["bash /develop/download_data.sh"]
+          volumeMounts:
+            - name: adm-data
+              mountPath: /develop/data
+          resources:
+            limits:
+              memory: 8Gi
+              cpu: "4"
+            requests:
+              memory: 8Gi
+              cpu: "4"
+      volumes:
+        - name: adm-data
+          persistentVolumeClaim:
+            claimName: adm-data

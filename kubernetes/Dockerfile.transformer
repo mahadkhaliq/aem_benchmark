@@ -1,0 +1,25 @@
+FROM pytorch/pytorch:1.9.1-cuda11.1-cudnn8-runtime
+
+WORKDIR /develop
+
+ENV PYTHONUNBUFFERED=1
+
+RUN apt-get update && apt-get install -y git wget unzip && rm -rf /var/lib/apt/lists/*
+
+# setuptools==59.5.0 required — PyTorch 1.9.1 uses distutils.version.LooseVersion
+# which was removed in newer setuptools.
+RUN pip install --no-cache-dir setuptools==59.5.0 && \
+    pip install --no-cache-dir \
+        AEML==0.0.1 \
+        "numpy<2" \
+        pandas \
+        scikit-learn \
+        matplotlib \
+        tensorboard \
+        tqdm \
+        einops \
+        seaborn
+
+COPY scripts/download_data.sh /develop/download_data.sh
+COPY scripts/train_transformer.sh /develop/train_transformer.sh
+RUN chmod +x /develop/download_data.sh /develop/train_transformer.sh

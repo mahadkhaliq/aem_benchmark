@@ -1,0 +1,49 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: adm-train
+  namespace: gp-engine-malof
+spec:
+  completions: 1
+  parallelism: 1
+  backoffLimit: 1
+  template:
+    spec:
+      automountServiceAccountToken: false
+      restartPolicy: Never
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: topology.kubernetes.io/region
+                    operator: In
+                    values:
+                      - us-central
+      containers:
+        - name: adm-train
+          image: mahadkhaliq/adm-train:v1
+          workingDir: /develop
+          command: ["/bin/bash", "-c"]
+          args: ["bash /develop/train.sh"]
+          volumeMounts:
+            - name: adm-data
+              mountPath: /develop/data
+            - name: adm-results
+              mountPath: /develop/results
+          resources:
+            limits:
+              memory: 16Gi
+              cpu: "4"
+              nvidia.com/gpu: "1"
+            requests:
+              memory: 16Gi
+              cpu: "4"
+              nvidia.com/gpu: "1"
+      volumes:
+        - name: adm-data
+          persistentVolumeClaim:
+            claimName: adm-data
+        - name: adm-results
+          persistentVolumeClaim:
+            claimName: adm-results
