@@ -122,3 +122,57 @@ On the paper's cluster (Duke HPC, `/scratch/sr365/...`) with 32–80 GB GPU VRAM
 An early attempt used `lr_scheduler='warm_restart'` (CosineAnnealingWarmRestarts with T_0=50). This resets the learning rate to its initial value every 50 epochs, causing repeated loss spikes and preventing stable convergence. The paper's `flags.obj` confirms `lr_scheduler='reduce_plateau'` was used throughout. All variants now use `reduce_plateau`.
 
 This was the most time-consuming issue across the Nautilus runs. After achieving Test MSE 0.001813 with the original AEML training loop locally (Run 1), we rewrote `train.py` with a custom loop to add detailed TensorBoard logging. This led to four consecutive runs on Nautilus with degraded results (Test MSE ranging from 0.002410 to 0.003209). The root cause was identified by reading the AEML `class_wrapper.py` source directly. The critical finding was on line 219: `self.lr_scheduler.step(train_avg_loss)` — the scheduler steps every epoch on training loss, not validation loss, and this line is outside the eval block. Our custom loop had been stepping on validation loss at different intervals across different attempts. Additionally, the AEML loop uses `reduction='mean'` averaged over batches rather than over total elements. After multiple failed attempts to replicate the behavior manually, the decision was made to abandon the custom loop entirely and call `ntwk.train_()` directly from the AEML `Network` class, with only a final test evaluation and `results.json` saving appended after. This is the safest approach as it uses the exact code the paper was trained with.
+
+#### T6. Checkpoint Not Saved to PVC — Three Consecutive Failed Runs
+
+Across the first three Nautilus Transformer runs, the trained checkpoint was never successfully saved to the `adm-results` PVC, despite training completing successfully each time.
+
+**Run 1 (pod zxxvf):** Training crashed at the final test evaluation step with a CUDA OOM error (all 5,868 test samples fed at once — same batch_first=False issue as T4). Because the entrypoint script used `set -e`, the shell exited immediately on the Python error, skipping the `cp` command that followed. The PVC was left empty.
+
+**Run 2 (pod wvjbh):** An in-pod file watcher was added to copy the checkpoint as soon as it appeared. The watcher failed silently — exact cause unclear, likely a race condition or path mismatch.
+
+**Run 3 (pod s6d2z):** The OOM was fixed with batched evaluation (chunks of 256). The shell `cp` command ran and reported success, but the destination on the CephFS-backed PVC was created as an empty directory rather than a file. This is a known silent failure mode on CephFS when a copy appears to succeed but creates a directory node instead. The checkpoint was lost.
+
+**Fix:** Move the checkpoint save entirely into Python using `shutil.copy2` at the end of `train_transformer.py`, before the script exits. Python's file I/O handles CephFS correctly and raises an exception if the copy fails, making failures visible rather than silent. The shell `cp` in `train_transformer.sh` was kept as a fallback but is no longer the primary save path. This fix was committed as `da2b7ee` and verified in the fourth run.
+
+#### T7. OOM at Final Test Evaluation on All 5,868 Test Samples
+
+After training completed, the final evaluation line `net(test_x_t)` passed all 5,868 test samples to the model in a single forward pass. Due to the batch_first=False bug (T4), the TransformerEncoder treated this as a sequence of length 5,868, producing attention weight tensors of shape `[8×12, 5868, 5868]` — several GB — causing OOM even on 32 GB VRAM.
+
+**Fix:** Replaced the single-batch evaluation with a loop over chunks of 256 samples:
+```python
+_batch = 256
+_preds = []
+with torch.no_grad():
+    for i in range(0, len(test_x_t), _batch):
+        _preds.append(net(test_x_t[i:i+_batch].to(device)).cpu())
+pred = torch.cat(_preds, dim=0)
+```
+
+#### T8. monitor_nautilus.sh Running as Multiple Instances
+
+When the monitor script was restarted between runs without killing the previous instance, two processes polled simultaneously and wrote interleaved log lines, corrupting the log file. Fix: always run `pkill -f monitor_nautilus.sh` before restarting the monitor.
+
+---
+
+## Transformer Results
+
+Four runs were conducted on Nautilus (namespace `gp-engine-malof`, A100/V100 GPU, batch_size=1024):
+
+| Run | Pod | Outcome |
+|-----|-----|---------|
+| 1 | zxxvf | OOM at test eval, checkpoint lost |
+| 2 | wvjbh | Watcher failed silently, checkpoint lost |
+| 3 | s6d2z | CephFS silent failure, checkpoint lost |
+| 4 | wmhwf | **Success** — checkpoint saved via Python shutil |
+
+**Final results (Run 4):**
+
+| Metric | Value |
+|--------|-------|
+| Best val MSE | 0.001502 (epoch 120) |
+| Test MSE | **0.001501** |
+| Paper target (Transformer) | 0.001470 |
+| Gap | ~2% |
+
+The model matches the paper's reported Transformer MSE within normal run-to-run variance. Training peaked at epoch 120, after which ReduceLROnPlateau reduced the LR at epoch 155 but validation loss did not improve further. The checkpoint is saved at `forward_model/models/Transformer/adm_transformer_v1_nautilus/best_model_forward.pt` and exported to ONNX at `forward_model/converted_models/transformer_v1.onnx`.
