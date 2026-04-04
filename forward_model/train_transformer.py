@@ -144,12 +144,17 @@ ntwk.train_(
 net = torch.load(os.path.join(CKPT_DIR, 'best_model_forward.pt'), map_location=device)
 net.eval()
 
-test_x_t = torch.tensor(test_x).to(device)
-test_y_t = torch.tensor(test_y).to(device)
+test_x_t = torch.tensor(test_x)
+test_y_t = torch.tensor(test_y)
 
+# Evaluate in batches to avoid OOM on large test sets
+_batch = 256
+_preds = []
 with torch.no_grad():
-    pred = net(test_x_t)
-    test_mse = nn.functional.mse_loss(pred, test_y_t).item()
+    for i in range(0, len(test_x_t), _batch):
+        _preds.append(net(test_x_t[i:i+_batch].to(device)).cpu())
+pred = torch.cat(_preds, dim=0)
+test_mse = nn.functional.mse_loss(pred, test_y_t).item()
 
 results = {
     'variant': args.variant,
